@@ -173,18 +173,18 @@ int main(int argc, char** argv) {
   std::ofstream quality_file;
 
   // Create runtime results file.
-  runtime_file.open(outfile_name + "_" + std::to_string(distance_threshold) + 
-      "_" + std::to_string(query_tree_id) + "_" + "runtime.txt");
-  runtime_file << "scan_baseline,scan_baseline,scan_baseline_wang," <<
-      "scan_baseline_wang,scan_baseline_wang,scan_baseline_wang," <<
-      "index_baseline,index_baseline,index_baseline_wang,index_baseline_wang," <<
-      "index_baseline_wang,index_baseline_wang\n";
+  runtime_file.open(outfile_name + "-" + std::to_string(distance_threshold) + 
+      "-" + std::to_string(query_tree_id) + "-" + "runtime.txt");
+  runtime_file << "scan-baseline,scan-quickjedi,scan-baseline-wang," <<
+      "scan-quickjedi-wang,scan-baseline-jofilter,scan-quickjedi-jofilter," <<
+      "index-baseline,index-quickjedi,index-baseline_wang," <<
+      "index-quickjedi-wang,index-baseline-jofilter,index-quickjedi-jofilter\n";
   runtime_file.close();
   
   // Create quality results file.
-  quality_file.open (outfile_name + "_" + std::to_string(distance_threshold) + 
-      "_" + std::to_string(query_tree_id) + "_" + "quality.txt");
-  quality_file << "T1_ID,T2_ID,T1_SIZE,T1_SIZE,LOWERBOUND,UPPERBOUND,JEDI\n";
+  quality_file.open (outfile_name + "-" + std::to_string(distance_threshold) + 
+      "-" + std::to_string(query_tree_id) + "-" + "quality.txt");
+  quality_file << "T1-ID,T2-ID,T1-SIZE,T1-SIZE,LOWERBOUND,UPPERBOUND,JEDI\n";
   quality_file.close();
 
   //////////////////////////////////////////////////////////////////////////////
@@ -211,8 +211,8 @@ int main(int argc, char** argv) {
   unsigned int label_cnt = lsc.get_number_of_labels();
 
   // Create meta data file.
-  meta_file.open (outfile_name + "_" + std::to_string(distance_threshold) + 
-      "_" + std::to_string(query_tree_id) + "_" + "meta.txt");
+  meta_file.open (outfile_name + "-" + std::to_string(distance_threshold) + 
+      "-" + std::to_string(query_tree_id) + "-" + "meta.txt");
   meta_file << "COLSIZE,QUERYTREEID,PARSINGTIME,LABELUNIVERSESIZE,THRESHOLD\n";
   meta_file << trees_collection.size() << "," << 
       trees_collection[query_tree_id].get_tree_size() << "," << 
@@ -481,8 +481,8 @@ int main(int argc, char** argv) {
   // Print the results.
 
 
-  runtime_file.open (outfile_name + "_" + std::to_string(distance_threshold) + "_" + 
-      std::to_string(query_tree_id) + "_" + "runtime.txt", std::ios_base::app);
+  runtime_file.open (outfile_name + "-" + std::to_string(distance_threshold) + "-" + 
+      std::to_string(query_tree_id) + "-" + "runtime.txt", std::ios_base::app);
   runtime_file << //"#PRE_CANDIDATES," << 
   scan_baseline_pre_cand << "," << scan_quickjedi_pre_cand << "," << 
   scan_baseline_wang_pre_cand << "," << scan_quickjedi_wang_pre_cand << "," << 
@@ -529,7 +529,8 @@ int main(int argc, char** argv) {
   usleep(100000); // Wait 100ms for writing to disk.
 
   // Print quality measures.
-  quality_file.open (outfile_name + "_" + std::to_string(distance_threshold) + "_" + std::to_string(query_tree_id) + "_" + "quality.txt", std::ios_base::app);
+  quality_file.open (outfile_name + "-" + std::to_string(distance_threshold) + 
+    "-" + std::to_string(query_tree_id) + "-" + "quality.txt", std::ios_base::app);
   for (auto& result_pair: index_quickjedi_jofilter) {
     quality_file << result_pair.tree_id_1 << "," << result_pair.tree_id_2 << "," << 
     trees_collection[result_pair.tree_id_1].get_tree_size() << "," << 
