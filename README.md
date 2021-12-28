@@ -30,7 +30,7 @@ cmake ..
 make
 ```
 
-Perform the experiments presented by Huetter et al. (2022).
+Perform the experiments and plot the results as shown in Huetter et al. (2022).
 ```
 cd external
 git clone https://github.com/DatabaseGroup/jedi-datasets.git
@@ -38,4 +38,5 @@ cd jedi-datasets
 sh scripts/download-prepare.sh
 cd ../..
 sh scripts/execute-all-lookups.sh
+sh scripts/plot-all-lookups.sh
 ```
