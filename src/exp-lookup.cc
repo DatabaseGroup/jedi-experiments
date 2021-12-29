@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
   runtime_file.open(outfile_name + "-" + std::to_string(distance_threshold) +
       "-" + std::to_string(query_tree_id) + "-" + "runtime.txt");
   runtime_file << "scan-quickjedi-jofilter,jsim-baseline,jsim-quickjedi," <<
-      "jsim-baseline_wang,jsim-quickjedi-jofilter\n";
+      "jsim-baseline-wang,jsim-quickjedi-jofilter\n";
   runtime_file.close();
  
   //////////////////////////////////////////////////////////////////////////////
