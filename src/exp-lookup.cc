@@ -23,9 +23,9 @@
 ///
 /// \details
 /// Implements an experimental environment that executes algorithms located in
-/// the folder external/. The input file, the JEDI threshold, the output file, 
+/// the folder external/. The input file, the JEDI threshold, the output file,
 /// the query tree id, and the algorithms are passed as commandline arguments.
-/// A quality and runtime evaluation of similarity lookup queries based on the 
+/// A quality and runtime evaluation of similarity lookup queries based on the
 /// JSON edit distance (JEDI) are computed.
 
 #include <iostream>
@@ -51,6 +51,7 @@
 
 int main(int argc, char** argv) {
   using Label = label::JSONLabel;
+  using LabelSetElem = label_set_converter_index::LabelSetElement;
   using CostModel = cost_model::UnitCostModelJSON<Label>;
   using LabelDictionary = label::LabelDictionary<Label>;
   using TreeIndexer = node::TreeIndexJSON;
@@ -61,12 +62,20 @@ int main(int argc, char** argv) {
 
   // Arguments needed for execution.
   if (argc != 6) {
-    std::cout << "Please provide three input parameters:" << std::endl;
+    std::cout << "Please provide five input parameters:" << std::endl;
     std::cout << "(1) file_path, " << std::endl;
     std::cout << "(2) threshold, " << std::endl;
     std::cout << "(3) output file name, " << std::endl;
     std::cout << "(4) query_tree_id, " << std::endl;
-    std::cout << "(5) algorithm selection [0 ... 18]." << std::endl;
+    std::cout << "(5) algorithm selection [0 ... 5]:" << std::endl;
+    std::cout << "  - 0: all algorithms." << std::endl;
+    std::cout << "  - 1: all algorithms using JSIM." << std::endl;
+    std::cout << "  - 2: all algorithms using JSIM, QuickJedi." << std::endl;
+    std::cout << "  - 3: all algorithms using JSIM, JediOrder." << std::endl;
+    std::cout << "  - 4: all algorithms using JSIM, QuickJedi|JediOrder." << 
+      std::endl;
+    std::cout << "  - 5: algorithm that uses JSIM, QuickJedi, JOFilter." << 
+      std::endl;
     return -1;
   }
 
@@ -79,7 +88,7 @@ int main(int argc, char** argv) {
 
   // Initialize label dictionary.
   LabelDictionary ld;
-  
+ 
   // Initialize cost model.
   CostModel ucm(ld);
   JEDIBASE baseline_algorithm(ucm);
@@ -88,66 +97,31 @@ int main(int argc, char** argv) {
   JOFILTER jofilter_algorithm(ucm);
 
   // Data storage.
-  std::vector<lookup::LookupResultElement> scan_baseline;
-  std::vector<lookup::LookupResultElement> scan_quickjedi;
-  std::vector<lookup::LookupResultElement> scan_baseline_wang;
-  std::vector<lookup::LookupResultElement> scan_quickjedi_wang;
-  std::vector<lookup::LookupResultElement> scan_baseline_jofilter;
   std::vector<lookup::LookupResultElement> scan_quickjedi_jofilter;
-  std::vector<lookup::LookupResultElement> index_baseline;
-  std::vector<lookup::LookupResultElement> index_quickjedi;
-  std::vector<lookup::LookupResultElement> index_baseline_wang;
-  std::vector<lookup::LookupResultElement> index_quickjedi_wang;
-  std::vector<lookup::LookupResultElement> index_baseline_jofilter;
-  std::vector<lookup::LookupResultElement> index_quickjedi_jofilter;
-  long long int scan_baseline_ver = 0;
-  long long int scan_quickjedi_ver = 0;
-  long long int scan_baseline_wang_ver = 0;
-  long long int scan_quickjedi_wang_ver = 0;
-  long long int scan_baseline_jofilter_ver = 0;
+  std::vector<lookup::LookupResultElement> jsim_baseline;
+  std::vector<lookup::LookupResultElement> jsim_quickjedi;
+  std::vector<lookup::LookupResultElement> jsim_baseline_wang;
+  std::vector<lookup::LookupResultElement> jsim_quickjedi_jofilter;
   long long int scan_quickjedi_jofilter_ver = 0;
-  long long int index_baseline_ver = 0;
-  long long int index_quickjedi_ver = 0;
-  long long int index_baseline_wang_ver = 0;
-  long long int index_quickjedi_wang_ver = 0;
-  long long int index_baseline_jofilter_ver = 0;
-  long long int index_quickjedi_jofilter_ver = 0;
-  long long int scan_baseline_ub = 0;
-  long long int scan_quickjedi_ub = 0;
-  long long int scan_baseline_wang_ub = 0;
-  long long int scan_quickjedi_wang_ub = 0;
-  long long int scan_baseline_jofilter_ub = 0;
+  long long int jsim_baseline_ver = 0;
+  long long int jsim_quickjedi_ver = 0;
+  long long int jsim_baseline_wang_ver = 0;
+  long long int jsim_quickjedi_jofilter_ver = 0;
   long long int scan_quickjedi_jofilter_ub = 0;
-  long long int index_baseline_ub = 0;
-  long long int index_quickjedi_ub = 0;
-  long long int index_baseline_wang_ub = 0;
-  long long int index_quickjedi_wang_ub = 0;
-  long long int index_baseline_jofilter_ub = 0;
-  long long int index_quickjedi_jofilter_ub = 0;
-  long long int scan_baseline_cand = 0;
-  long long int scan_quickjedi_cand = 0;
-  long long int scan_baseline_wang_cand = 0;
-  long long int scan_quickjedi_wang_cand = 0;
-  long long int scan_baseline_jofilter_cand = 0;
+  long long int jsim_baseline_ub = 0;
+  long long int jsim_quickjedi_ub = 0;
+  long long int jsim_baseline_wang_ub = 0;
+  long long int jsim_quickjedi_jofilter_ub = 0;
   long long int scan_quickjedi_jofilter_cand = 0;
-  long long int index_baseline_cand = 0;
-  long long int index_quickjedi_cand = 0;
-  long long int index_baseline_wang_cand = 0;
-  long long int index_quickjedi_wang_cand = 0;
-  long long int index_baseline_jofilter_cand = 0;
-  long long int index_quickjedi_jofilter_cand = 0;
-  long long int scan_baseline_pre_cand = 0;
-  long long int scan_quickjedi_pre_cand = 0;
-  long long int scan_baseline_wang_pre_cand = 0;
-  long long int scan_quickjedi_wang_pre_cand = 0;
-  long long int scan_baseline_jofilter_pre_cand = 0;
+  long long int jsim_baseline_cand = 0;
+  long long int jsim_quickjedi_cand = 0;
+  long long int jsim_baseline_wang_cand = 0;
+  long long int jsim_quickjedi_jofilter_cand = 0;
   long long int scan_quickjedi_jofilter_pre_cand = 0;
-  long long int index_baseline_pre_cand = 0;
-  long long int index_quickjedi_pre_cand = 0;
-  long long int index_baseline_wang_pre_cand = 0;
-  long long int index_quickjedi_wang_pre_cand = 0;
-  long long int index_baseline_jofilter_pre_cand = 0;
-  long long int index_quickjedi_jofilter_pre_cand = 0;
+  long long int jsim_baseline_pre_cand = 0;
+  long long int jsim_quickjedi_pre_cand = 0;
+  long long int jsim_baseline_wang_pre_cand = 0;
+  long long int jsim_quickjedi_jofilter_pre_cand = 0;
 
   // Path to file containing the input tree.
   std::string file_path = argv[_COLLECTION];
@@ -161,8 +135,29 @@ int main(int argc, char** argv) {
   // Query tree id in collection.
   unsigned int query_tree_id = std::stoi(argv[_QUERY_ID]);
 
-  // Algorithm paramters: 
+  // Algorithm paramters:
   int algorithms = std::stoi(argv[_ALGORITHMS]);
+
+  // Verify whether algorithms parameter is set correctly.
+  if (algorithms < 0 || algorithms > 5) {
+    std::cout << "Error: incorrect algorithms parameter." << std::endl;
+    std::cout << std::endl;
+    std::cout << "Please provide five input parameters:" << std::endl;
+    std::cout << "(1) file_path, " << std::endl;
+    std::cout << "(2) threshold, " << std::endl;
+    std::cout << "(3) output file name, " << std::endl;
+    std::cout << "(4) query_tree_id, " << std::endl;
+    std::cout << "(5) algorithm selection [0 ... 5]:" << std::endl;
+    std::cout << "  - 0: all algorithms." << std::endl;
+    std::cout << "  - 1: all algorithms using JSIM." << std::endl;
+    std::cout << "  - 2: all algorithms using JSIM, QuickJedi." << std::endl;
+    std::cout << "  - 3: all algorithms using JSIM, JediOrder." << std::endl;
+    std::cout << "  - 4: all algorithms using JSIM, QuickJedi|JediOrder." << 
+      std::endl;
+    std::cout << "  - 5: algorithm that uses JSIM, QuickJedi, JOFilter." << 
+      std::endl;
+    return -1;
+  }
 
   // Timing object for runtime measurements.
   Timing timing;
@@ -173,16 +168,14 @@ int main(int argc, char** argv) {
   std::ofstream quality_file;
 
   // Create runtime results file.
-  runtime_file.open(outfile_name + "-" + std::to_string(distance_threshold) + 
+  runtime_file.open(outfile_name + "-" + std::to_string(distance_threshold) +
       "-" + std::to_string(query_tree_id) + "-" + "runtime.txt");
-  runtime_file << "scan-baseline,scan-quickjedi,scan-baseline-wang," <<
-      "scan-quickjedi-wang,scan-baseline-jofilter,scan-quickjedi-jofilter," <<
-      "index-baseline,index-quickjedi,index-baseline_wang," <<
-      "index-quickjedi-wang,index-baseline-jofilter,index-quickjedi-jofilter\n";
+  runtime_file << "scan-quickjedi-jofilter,jsim-baseline,jsim-quickjedi," <<
+      "jsim-baseline_wang,jsim-quickjedi-jofilter\n";
   runtime_file.close();
-  
+ 
   // Create quality results file.
-  quality_file.open (outfile_name + "-" + std::to_string(distance_threshold) + 
+  quality_file.open (outfile_name + "-" + std::to_string(distance_threshold) +
       "-" + std::to_string(query_tree_id) + "-" + "quality.txt");
   quality_file << "T1-ID,T2-ID,T1-SIZE,T1-SIZE,LOWERBOUND,UPPERBOUND,JEDI\n";
   quality_file.close();
@@ -204,336 +197,182 @@ int main(int argc, char** argv) {
 
   //////////////////////////////////////////////////////////////////////////////
   // CONVERT TREES TO LABEL SETS.
-  std::vector<std::pair<int, std::vector<label_set_converter_index::LabelSetElement>>> sets_collection;
+  std::vector<std::pair<int, std::vector<LabelSetElem>>> sets_collection;
   std::vector<std::pair<int, int>> size_setid_map;
   label_set_converter_index::Converter<Label> lsc;
-  lsc.assignFrequencyIdentifiers(trees_collection, sets_collection, size_setid_map);
+  lsc.assignFrequencyIdentifiers(trees_collection, sets_collection, 
+    size_setid_map);
   unsigned int label_cnt = lsc.get_number_of_labels();
 
   // Create meta data file.
-  meta_file.open (outfile_name + "-" + std::to_string(distance_threshold) + 
+  meta_file.open (outfile_name + "-" + std::to_string(distance_threshold) +
       "-" + std::to_string(query_tree_id) + "-" + "meta.txt");
   meta_file << "COLSIZE,QUERYTREEID,PARSINGTIME,LABELUNIVERSESIZE,THRESHOLD\n";
-  meta_file << trees_collection.size() << "," << 
-      trees_collection[query_tree_id].get_tree_size() << "," << 
-      parsing_t->getfloat() << "," << label_cnt << "," << 
+  meta_file << trees_collection.size() << "," <<
+      trees_collection[query_tree_id].get_tree_size() << "," <<
+      parsing_t->getfloat() << "," << label_cnt << "," <<
       distance_threshold << "\n";
   meta_file.close();
 
   //////////////////////////////////////////////////////////////////////////////
-  // SCAN WITH JEDIBASE VERIFICATION.
-  std::cout << " == SCAN WITH JEDIBASE VERIFICATION == " << std::endl;
-  auto* scan_baseline_t = timing.create_enroll("Scan; JEDIBASE; No UB");
-
-  // Initialize lookup algorithm.
-  lookup::VerificationScan<Label, JEDIBASE> sd;
-
-  scan_baseline_t->start();
-  // Verify all computed lookup candidates and return the lookup result.
-  if (algorithms == 0 || algorithms == 1 || algorithms == 2 || algorithms == 3) {
-    scan_baseline = sd.execute_lookup(trees_collection, query_tree_id, 
-        distance_threshold);
-  }
-  scan_baseline_t->stop();
-  scan_baseline_pre_cand = collection_size;
-  scan_baseline_cand = collection_size;
-  scan_baseline_ub = scan_baseline_cand - sd.get_verification_count();
-  scan_baseline_ver = sd.get_verification_count();
-
-  //////////////////////////////////////////////////////////////////////////////
-  // SCAN WITH QUICKJEDI VERIFICATION.
-  std::cout << " == SCAN WITH QUICKJEDI VERIFICATION == " << std::endl;
-  auto* scan_quickjedi_t = timing.create_enroll("Scan; QUICKJEDI; No UB");
-
-  // Initialize lookup algorithm.
-  lookup::VerificationScan<Label, QUICKJEDI> ss;
-
-  scan_quickjedi_t->start();
-  // Verify all computed lookup candidates and return the lookup result.
-  if (algorithms == 0 || algorithms == 1 || algorithms == 6 || algorithms == 7) {
-    scan_quickjedi = ss.execute_lookup(trees_collection, query_tree_id, 
-        distance_threshold);
-  }
-  scan_quickjedi_t->stop();
-  scan_quickjedi_pre_cand = collection_size;
-  scan_quickjedi_cand = collection_size;
-  scan_quickjedi_ub = scan_quickjedi_cand - ss.get_verification_count();
-  scan_quickjedi_ver = ss.get_verification_count();
-
-  //////////////////////////////////////////////////////////////////////////////
-  // SCAN WITH JEDIBASE VERIFICATION AND WANG UPPER BOUND.
-  std::cout << " == SCAN WITH JEDIBASE VERIFICATION AND WANG UPPER BOUND == " << std::endl;
-  auto* scan_baseline_wang_t = timing.create_enroll("Scan; JEDIBASE; WANG UB");
-
-  // Initialize lookup algorithm.
-  lookup::VerificationUBkScan<Label, JEDIBASE, JOFILTER> sdo;
-
-  scan_baseline_wang_t->start();
-  // Verify all computed lookup candidates and return the lookup result.
-  if (algorithms == 0 || algorithms == 1 || algorithms == 2 || algorithms == 4) {
-    scan_baseline_wang = sdo.execute_lookup(trees_collection, query_tree_id, 
-        distance_threshold);
-  }
-  scan_baseline_wang_t->stop();
-  scan_baseline_wang_pre_cand = collection_size;
-  scan_baseline_wang_cand = collection_size;
-  scan_baseline_wang_ub = scan_baseline_wang_cand - sdo.get_verification_count();
-  scan_baseline_wang_ver = sdo.get_verification_count();
-
-  //////////////////////////////////////////////////////////////////////////////
-  // SCAN WITH QUICKJEDI VERIFICATION AND WANG UPPER BOUND.
-  std::cout << " == SCAN WITH QUICKJEDI VERIFICATION AND WANG UPPER BOUND == " << std::endl;
-  auto* scan_quickjedi_wang_t = timing.create_enroll("Scan; QUICKJEDI; WANG UB");
-
-  // Initialize lookup algorithm.
-  lookup::VerificationUBkScan<Label, QUICKJEDI, JOFILTER> sso;
-
-  scan_quickjedi_wang_t->start();
-  // Verify all computed lookup candidates and return the lookup result.
-  if (algorithms == 0 || algorithms == 1 || algorithms == 6 || algorithms == 8) {
-    scan_quickjedi_wang = sso.execute_lookup(trees_collection, query_tree_id, 
-        distance_threshold);
-  }
-  scan_quickjedi_wang_t->stop();
-  scan_quickjedi_wang_pre_cand = collection_size;
-  scan_quickjedi_wang_cand = collection_size;
-  scan_quickjedi_wang_ub = scan_quickjedi_wang_cand - sso.get_verification_count();
-  scan_quickjedi_wang_ver = sso.get_verification_count();
-
-  //////////////////////////////////////////////////////////////////////////////
-  // SCAN WITH JEDIBASE VERIFICATION AND JOFILTER UPPER BOUND.
-  std::cout << " == SCAN WITH JEDIBASE VERIFICATION AND JOFILTER UPPER BOUND == " << std::endl;
-  auto* scan_baseline_jofilter_t = timing.create_enroll("Scan; JEDIBASE; JOFILTER UB");
-
-  // Initialize lookup algorithm.
-  lookup::VerificationUBkScan<Label, JEDIBASE, JOFILTER> sdok;
-
-  scan_baseline_jofilter_t->start();
-  // Verify all computed lookup candidates and return the lookup result.
-  if (algorithms == 0 || algorithms == 1 || algorithms == 2 || algorithms == 5) {
-    scan_baseline_jofilter = sdok.execute_lookup(trees_collection, query_tree_id, 
-        distance_threshold);
-  }
-  scan_baseline_jofilter_t->stop();
-  scan_baseline_jofilter_pre_cand = collection_size;
-  scan_baseline_jofilter_cand = collection_size;
-  scan_baseline_jofilter_ub = scan_baseline_jofilter_cand - sdok.get_verification_count();
-  scan_baseline_jofilter_ver = sdok.get_verification_count();
-
-  //////////////////////////////////////////////////////////////////////////////
-  // SCAN WITH QUICKJEDI VERIFICATION AND JOFILTER UPPER BOUND.
-  std::cout << " == SCAN WITH QUICKJEDI VERIFICATION AND JOFILTER UPPER BOUND == " << std::endl;
-  auto* scan_quickjedi_jofilter_t = timing.create_enroll("Scan; QUICKJEDI; JOFILTER UB");
+  // SCAN, QUICKJEDI, JOFILTER
+  std::cout << " == SCAN, QUICKJEDI, JOFILTER == " << std::endl;
+  auto* scan_quickjedi_jofilter_t = 
+    timing.create_enroll("SCAN, QUICKJEDI, JOFILTER");
 
   // Initialize lookup algorithm.
   lookup::VerificationUBkScan<Label, QUICKJEDI, JOFILTER> ssok;
 
   scan_quickjedi_jofilter_t->start();
   // Verify all computed lookup candidates and return the lookup result.
-  if (algorithms == 0 || algorithms == 1 || algorithms == 6 || algorithms == 9) {
-    scan_quickjedi_jofilter = ssok.execute_lookup(trees_collection, query_tree_id, 
-        distance_threshold);
+  if (algorithms == 0) {
+    scan_quickjedi_jofilter = ssok.execute_lookup(trees_collection,
+        query_tree_id, distance_threshold);
   }
   scan_quickjedi_jofilter_t->stop();
   scan_quickjedi_jofilter_pre_cand = collection_size;
   scan_quickjedi_jofilter_cand = collection_size;
-  scan_quickjedi_jofilter_ub = scan_quickjedi_jofilter_cand - ssok.get_verification_count();
+  scan_quickjedi_jofilter_ub = scan_quickjedi_jofilter_cand - 
+    ssok.get_verification_count();
   scan_quickjedi_jofilter_ver = ssok.get_verification_count();
 
   //////////////////////////////////////////////////////////////////////////////
-  // BUILD INDEX.
+  // BUILD JSIM INDEX.
   lookup::TwoStageInvertedList tsil(label_cnt);
   tsil.build(sets_collection);
 
   //////////////////////////////////////////////////////////////////////////////
-  // INDEX SCAN WITH JEDIBASE VERIFICATION.
-  std::cout << " == INDEX SCAN WITH JEDIBASE VERIFICATION == " << std::endl;
-  auto* index_baseline_t = timing.create_enroll("Index Scan; JEDIBASE; No UB");
+  // JSIM, BASELINE.
+  std::cout << " == JSIM, BASELINE == " << std::endl;
+  auto* jsim_baseline_t = timing.create_enroll("JSIM, BASELINE");
 
   // Initialize lookup algorithm.
   lookup::VerificationIndex<Label, JEDIBASE> id;
 
-  index_baseline_t->start();
+  jsim_baseline_t->start();
   // Verify all computed lookup candidates and return the lookup result.
-  if (algorithms == 0 || algorithms == 10 || algorithms == 11 || 
-      algorithms == 12) {
-    index_baseline = id.execute_lookup(trees_collection, sets_collection, 
+  if (algorithms == 0 || algorithms == 1) {
+    jsim_baseline = id.execute_lookup(trees_collection, sets_collection,
         size_setid_map, tsil, query_tree_id, distance_threshold);
   }
-  index_baseline_t->stop();
-  index_baseline_pre_cand = id.get_pre_candidates_count();
-  index_baseline_cand = id.get_candidates_count();
-  index_baseline_ub = index_baseline_cand - id.get_verification_count();
-  index_baseline_ver = id.get_verification_count();
+  jsim_baseline_t->stop();
+  jsim_baseline_pre_cand = id.get_pre_candidates_count();
+  jsim_baseline_cand = id.get_candidates_count();
+  jsim_baseline_ub = jsim_baseline_cand - id.get_verification_count();
+  jsim_baseline_ver = id.get_verification_count();
 
 
   //////////////////////////////////////////////////////////////////////////////
-  // INDEX SCAN WITH QUICKJEDI VERIFICATION.
-  std::cout << " == INDEX SCAN WITH QUICKJEDI VERIFICATION == " << std::endl;
-  auto* index_quickjedi_t = timing.create_enroll("Index Scan; QUICKJEDI; No UB");
+  // JSIM, QUICKJEDI.
+  std::cout << " == JSIM, QUICKJEDI == " << std::endl;
+  auto* jsim_quickjedi_t = timing.create_enroll("JSIM, QUICKJEDI");
 
   // Initialize lookup algorithm.
   lookup::VerificationIndex<Label, QUICKJEDI> is;
 
-  index_quickjedi_t->start();
+  jsim_quickjedi_t->start();
   // Verify all computed lookup candidates and return the lookup result.
-  if (algorithms == 0 || algorithms == 10 || algorithms == 15 || 
-      algorithms == 16 || algorithms == 19) {
-    index_quickjedi = is.execute_lookup(trees_collection, sets_collection, 
+  if (algorithms == 0 || algorithms == 1 || algorithms == 2 ||
+      algorithms == 4) {
+    jsim_quickjedi = is.execute_lookup(trees_collection, sets_collection,
         size_setid_map, tsil, query_tree_id, distance_threshold);
   }
-  index_quickjedi_t->stop();
-  index_quickjedi_pre_cand = is.get_pre_candidates_count();
-  index_quickjedi_cand = is.get_candidates_count();
-  index_quickjedi_ub = index_quickjedi_cand - is.get_verification_count();
-  index_quickjedi_ver = is.get_verification_count();
+  jsim_quickjedi_t->stop();
+  jsim_quickjedi_pre_cand = is.get_pre_candidates_count();
+  jsim_quickjedi_cand = is.get_candidates_count();
+  jsim_quickjedi_ub = jsim_quickjedi_cand - is.get_verification_count();
+  jsim_quickjedi_ver = is.get_verification_count();
 
 
   //////////////////////////////////////////////////////////////////////////////
-  // INDEX SCAN WITH JEDIBASE VERIFICATION AND WANG UPPER BOUND.
-  std::cout << " == INDEX SCAN WITH JEDIBASE VERIFICATION AND WANG UPPER BOUND == " << std::endl;
-  auto* index_baseline_wang_t = timing.create_enroll("Index Scan; JEDIBASE; WANG UB");
+  // JSIM, BASELINE, WANG.
+  std::cout << " == JSIM, BASELINE, WANG == " << std::endl;
+  auto* jsim_baseline_wang_t = timing.create_enroll("JSIM, BASELINE, WANG");
 
   // Initialize lookup algorithm.
   lookup::VerificationUBkIndex<Label, JEDIBASE, JOFILTER> ido;
 
-  index_baseline_wang_t->start();
+  jsim_baseline_wang_t->start();
   // Verify all computed lookup candidates and return the lookup result.
-  if (algorithms == 0 || algorithms == 10 || algorithms == 11 || 
-      algorithms == 13) {
-    index_baseline_wang = ido.execute_lookup(trees_collection, sets_collection, 
+  if (algorithms == 0 || algorithms == 1 || algorithms == 3 ||
+      algorithms == 4) {
+    jsim_baseline_wang = ido.execute_lookup(trees_collection, sets_collection,
         size_setid_map, tsil, query_tree_id, distance_threshold);
   }
-  index_baseline_wang_t->stop();
-  index_baseline_wang_pre_cand = ido.get_pre_candidates_count();
-  index_baseline_wang_cand = ido.get_candidates_count();
-  index_baseline_wang_ub = index_baseline_wang_cand - ido.get_verification_count();
-  index_baseline_wang_ver = ido.get_verification_count();
+  jsim_baseline_wang_t->stop();
+  jsim_baseline_wang_pre_cand = ido.get_pre_candidates_count();
+  jsim_baseline_wang_cand = ido.get_candidates_count();
+  jsim_baseline_wang_ub = jsim_baseline_wang_cand - 
+    ido.get_verification_count();
+  jsim_baseline_wang_ver = ido.get_verification_count();
 
 
   //////////////////////////////////////////////////////////////////////////////
-  // INDEX SCAN WITH QUICKJEDI VERIFICATION AND WANG UPPER BOUND.
-  std::cout << " == INDEX SCAN WITH QUICKJEDI VERIFICATION AND WANG UPPER BOUND == " << std::endl;
-  auto* index_quickjedi_wang_t = timing.create_enroll("Index Scan; QUICKJEDI; WANG UB");
-
-  // Initialize lookup algorithm.
-  lookup::VerificationUBkIndex<Label, QUICKJEDI, JOFILTER> iso;
-
-  index_quickjedi_wang_t->start();
-  // Verify all computed lookup candidates and return the lookup result.
-  if (algorithms == 0 || algorithms == 10 || algorithms == 15 || 
-      algorithms == 17 || algorithms == 19 || algorithms == 20) {
-    index_quickjedi_wang = iso.execute_lookup(trees_collection, sets_collection, 
-        size_setid_map, tsil, query_tree_id, distance_threshold);
-  }
-  index_quickjedi_wang_t->stop();
-  index_quickjedi_wang_pre_cand = iso.get_pre_candidates_count();
-  index_quickjedi_wang_cand = iso.get_candidates_count();
-  index_quickjedi_wang_ub = index_quickjedi_wang_cand - iso.get_verification_count();
-  index_quickjedi_wang_ver = iso.get_verification_count();
-
-
-  //////////////////////////////////////////////////////////////////////////////
-  // INDEX SCAN WITH JEDIBASE VERIFICATION AND JOFILTER UPPER BOUND.
-  std::cout << " == INDEX SCAN WITH JEDIBASE VERIFICATION AND JOFILTER UPPER BOUND == " << std::endl;
-  auto* index_baseline_jofilter_t = timing.create_enroll("Index Scan; JEDIBASE; JOFILTER UB");
-
-  // Initialize lookup algorithm.
-  lookup::VerificationUBkIndex<Label, JEDIBASE, JOFILTER> idok;
-
-  index_baseline_jofilter_t->start();
-  // Verify all computed lookup candidates and return the lookup result.
-  if (algorithms == 0 || algorithms == 10 || algorithms == 11 || 
-      algorithms == 14 || algorithms == 19 || algorithms == 20) {
-    index_baseline_jofilter = idok.execute_lookup(trees_collection, 
-      sets_collection, size_setid_map, tsil, query_tree_id, distance_threshold);
-  }
-  index_baseline_jofilter_t->stop();
-  index_baseline_jofilter_pre_cand = idok.get_pre_candidates_count();
-  index_baseline_jofilter_cand = idok.get_candidates_count();
-  index_baseline_jofilter_ub = index_baseline_jofilter_cand - idok.get_verification_count();
-  index_baseline_jofilter_ver = idok.get_verification_count();
-
-
-  //////////////////////////////////////////////////////////////////////////////
-  // INDEX SCAN WITH QUICKJEDI VERIFICATION AND JOFILTER UPPER BOUND.
-  std::cout << " == INDEX SCAN WITH QUICKJEDI VERIFICATION AND JOFILTER UPPER BOUND == " << std::endl;
-  auto* index_quickjedi_jofilter_t = timing.create_enroll("Index Scan; QUICKJEDI; JOFILTER UB");
+  // JSIM, QUICKJEDI, JOFILTER.
+  std::cout << " == JSIM, QUICKJEDI, JOFILTER == " << std::endl;
+  auto* jsim_quickjedi_jofilter_t = 
+    timing.create_enroll("JSIM, QUICKJEDI, JOFILTER");
 
   // Initialize lookup algorithm.
   lookup::VerificationUBkIndex<Label, QUICKJEDI, JOFILTER> isok;
 
-  index_quickjedi_jofilter_t->start();
+  jsim_quickjedi_jofilter_t->start();
   // Verify all computed lookup candidates and return the lookup result.
-  if (algorithms == 0 || algorithms == 10 || algorithms == 15 || 
-      algorithms == 18 || algorithms == 19 || algorithms == 20) {
-    index_quickjedi_jofilter = isok.execute_lookup(trees_collection, 
+  if (algorithms == 0 || algorithms == 1 || algorithms == 2 ||
+      algorithms == 3 || algorithms == 4 || algorithms == 5) {
+    jsim_quickjedi_jofilter = isok.execute_lookup(trees_collection,
       sets_collection, size_setid_map, tsil, query_tree_id, distance_threshold);
   }
-  index_quickjedi_jofilter_t->stop();
-  index_quickjedi_jofilter_pre_cand = isok.get_pre_candidates_count();
-  index_quickjedi_jofilter_cand = isok.get_candidates_count();
-  index_quickjedi_jofilter_ub = index_quickjedi_jofilter_cand - isok.get_verification_count();
-  index_quickjedi_jofilter_ver = isok.get_verification_count();
+  jsim_quickjedi_jofilter_t->stop();
+  jsim_quickjedi_jofilter_pre_cand = isok.get_pre_candidates_count();
+  jsim_quickjedi_jofilter_cand = isok.get_candidates_count();
+  jsim_quickjedi_jofilter_ub = jsim_quickjedi_jofilter_cand - 
+    isok.get_verification_count();
+  jsim_quickjedi_jofilter_ver = isok.get_verification_count();
 
 
   // //////////////////////////////////////////////////////////////////////////////
   // Print the results.
 
 
-  runtime_file.open (outfile_name + "-" + std::to_string(distance_threshold) + "-" + 
-      std::to_string(query_tree_id) + "-" + "runtime.txt", std::ios_base::app);
-  runtime_file << //"#PRE_CANDIDATES," << 
-  scan_baseline_pre_cand << "," << scan_quickjedi_pre_cand << "," << 
-  scan_baseline_wang_pre_cand << "," << scan_quickjedi_wang_pre_cand << "," << 
-  scan_baseline_jofilter_pre_cand << "," << scan_quickjedi_jofilter_pre_cand << "," << 
-  index_baseline_pre_cand << "," << index_quickjedi_pre_cand << "," << 
-  index_baseline_wang_pre_cand << "," << index_quickjedi_wang_pre_cand << "," << 
-  index_baseline_jofilter_pre_cand << "," << index_quickjedi_jofilter_pre_cand << "\n";
-  runtime_file << //"#CANDIDATES," << 
-  scan_baseline_cand << "," << scan_quickjedi_cand << "," << 
-  scan_baseline_wang_cand << "," << scan_quickjedi_wang_cand << "," << 
-  scan_baseline_jofilter_cand << "," << scan_quickjedi_jofilter_cand << "," << 
-  index_baseline_cand << "," << index_quickjedi_cand << "," << 
-  index_baseline_wang_cand << "," << index_quickjedi_wang_cand << "," << 
-  index_baseline_jofilter_cand << "," << index_quickjedi_jofilter_cand << "\n";
-  runtime_file << //"#UPPER BOUND," << 
-  scan_baseline_ub << "," << scan_quickjedi_ub << "," << 
-  scan_baseline_wang_ub << "," << scan_quickjedi_wang_ub << "," << 
-  scan_baseline_jofilter_ub << "," << scan_quickjedi_jofilter_ub << "," << 
-  index_baseline_ub << "," << index_quickjedi_ub << "," << 
-  index_baseline_wang_ub << "," << index_quickjedi_wang_ub << "," << 
-  index_baseline_jofilter_ub << "," << index_quickjedi_jofilter_ub << "\n";
-  runtime_file << //"#VERIFICATION," << 
-  scan_baseline_ver << "," << scan_quickjedi_ver << "," << 
-  scan_baseline_wang_ver << "," << scan_quickjedi_wang_ver << "," << 
-  scan_baseline_jofilter_ver << "," << scan_quickjedi_jofilter_ver << "," << 
-  index_baseline_ver << "," << index_quickjedi_ver << "," << 
-  index_baseline_wang_ver << "," << index_quickjedi_wang_ver << "," << 
-  index_baseline_jofilter_ver << "," << index_quickjedi_jofilter_ver << "\n";
-  runtime_file << //"RES_SIZE," << 
-  scan_baseline.size() << "," << scan_quickjedi.size() << "," << 
-  scan_baseline_wang.size() << "," << scan_quickjedi_wang.size() << "," << 
-  scan_baseline_jofilter.size() << "," << scan_quickjedi_jofilter.size() << "," << 
-  index_baseline.size() << "," << index_quickjedi.size() << "," << 
-  index_baseline_wang.size() << "," << index_quickjedi_wang.size() << "," << 
-  index_baseline_jofilter.size() << "," << index_quickjedi_jofilter.size() << "\n";
-  runtime_file << //"EXE_TIME," << 
-  scan_baseline_t->getfloat() << "," << scan_quickjedi_t->getfloat() << "," << 
-  scan_baseline_wang_t->getfloat() << "," << scan_quickjedi_wang_t->getfloat() << "," << 
-  scan_baseline_jofilter_t->getfloat() << "," << scan_quickjedi_jofilter_t->getfloat() << "," << 
-  index_baseline_t->getfloat() << "," << index_quickjedi_t->getfloat() << "," << 
-  index_baseline_wang_t->getfloat() << "," << index_quickjedi_wang_t->getfloat() << "," << 
-  index_baseline_jofilter_t->getfloat() << "," << index_quickjedi_jofilter_t->getfloat() << "\n";
+  runtime_file.open (outfile_name + "-" + std::to_string(distance_threshold) + 
+    "-" + 
+    std::to_string(query_tree_id) + "-" + "runtime.txt", std::ios_base::app);
+  runtime_file << //"#PRE_CANDIDATES," <<
+  scan_quickjedi_jofilter_pre_cand << "," << jsim_baseline_pre_cand << "," << 
+  jsim_quickjedi_pre_cand << "," << jsim_baseline_wang_pre_cand << "," << 
+  jsim_quickjedi_jofilter_pre_cand << "\n";
+  runtime_file << //"#CANDIDATES," <<
+  scan_quickjedi_jofilter_cand << "," << jsim_baseline_cand << "," << 
+  jsim_quickjedi_cand << "," << jsim_baseline_wang_cand << "," <<
+  jsim_quickjedi_jofilter_cand << "\n";
+  runtime_file << //"#UPPER BOUND," <<
+  scan_quickjedi_jofilter_ub << "," << jsim_baseline_ub << "," << 
+  jsim_quickjedi_ub << "," << jsim_baseline_wang_ub << "," <<
+  jsim_quickjedi_jofilter_ub << "\n";
+  runtime_file << //"#VERIFICATION," <<
+  scan_quickjedi_jofilter_ver << "," << jsim_baseline_ver << "," << 
+  jsim_quickjedi_ver << "," << jsim_baseline_wang_ver << "," << 
+  jsim_quickjedi_jofilter_ver << "\n";
+  runtime_file << //"RES_SIZE," <<
+  scan_quickjedi_jofilter.size() << "," << jsim_baseline.size() << "," << 
+  jsim_quickjedi.size() << "," << jsim_baseline_wang.size() << "," << 
+  jsim_quickjedi_jofilter.size() << "\n";
+  runtime_file << //"EXE_TIME," <<
+  scan_quickjedi_jofilter_t->getfloat() << "," << 
+  jsim_baseline_t->getfloat() << "," << jsim_quickjedi_t->getfloat() << "," <<
+  jsim_baseline_wang_t->getfloat() << "," << 
+  jsim_quickjedi_jofilter_t->getfloat() << "\n";
   runtime_file.close();
   usleep(100000); // Wait 100ms for writing to disk.
 
   // Print quality measures.
-  quality_file.open (outfile_name + "-" + std::to_string(distance_threshold) + 
-    "-" + std::to_string(query_tree_id) + "-" + "quality.txt", std::ios_base::app);
-  for (auto& result_pair: index_quickjedi_jofilter) {
-    quality_file << result_pair.tree_id_1 << "," << result_pair.tree_id_2 << "," << 
-    trees_collection[result_pair.tree_id_1].get_tree_size() << "," << 
+  quality_file.open (outfile_name + "-" + std::to_string(distance_threshold) +
+    "-" + 
+    std::to_string(query_tree_id) + "-" + "quality.txt", std::ios_base::app);
+  for (auto& result_pair: jsim_quickjedi_jofilter) {
+    quality_file << result_pair.tree_id_1 << "," << result_pair.tree_id_2 << 
+    "," << trees_collection[result_pair.tree_id_1].get_tree_size() << "," <<
     trees_collection[result_pair.tree_id_2].get_tree_size() << "," <<
     result_pair.lower_bound << "," << result_pair.upper_bound << "," <<
     result_pair.jedi_value << "\n";

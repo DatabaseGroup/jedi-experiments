@@ -39,10 +39,9 @@ from argparse import ArgumentParser
 
 # Linestyles for twelve algorithmic configurations.
 linestyles = ['-'] #, '-.', '--', ':']
-colors = ['#ca6680', '#e8a77c', '#946592', '#4f6ece', '#e8a77c', '#63a375',
-            '#ca6680', '#e8a77c', '#946592', '#4f6ece', '#e8a77c', '#78c0dd']
-markers = ['.', '.', '.', '.', '.', 'X', '*', 'p', '.', '.', '.', 'D']
-markersizes = [0, 0, 0, 0, 0, 15, 20, 20, 30, 0, 0, 15]
+colors = ['#63a375', '#ca6680', '#e8a77c', '#946592', '#78c0dd']
+markers = ['X', '*', 'p', '.', 'D']
+markersizes = [15, 20, 20, 30, 15]
 
 def main(argv):
     # Read command line arguments.
