@@ -167,6 +167,8 @@ int main(int argc, char** argv) {
   std::ofstream meta_file;
   std::ofstream quality_file;
 
+
+  //////////////////////////////////////////////////////////////////////////////
   // Create runtime results file.
   runtime_file.open(outfile_name + "-" + std::to_string(distance_threshold) +
       "-" + std::to_string(query_tree_id) + "-" + "runtime.txt");
@@ -174,11 +176,13 @@ int main(int argc, char** argv) {
       "jsim-baseline_wang,jsim-quickjedi-jofilter\n";
   runtime_file.close();
  
+  //////////////////////////////////////////////////////////////////////////////
   // Create quality results file.
   quality_file.open (outfile_name + "-" + std::to_string(distance_threshold) +
       "-" + std::to_string(query_tree_id) + "-" + "quality.txt");
   quality_file << "T1-ID,T2-ID,T1-SIZE,T1-SIZE,LOWERBOUND,UPPERBOUND,JEDI\n";
   quality_file.close();
+
 
   //////////////////////////////////////////////////////////////////////////////
   // Parsing input trees.
@@ -194,6 +198,7 @@ int main(int argc, char** argv) {
   long int collection_size = trees_collection.size();
 
   parsing_t->stop();
+
 
   //////////////////////////////////////////////////////////////////////////////
   // CONVERT TREES TO LABEL SETS.
@@ -213,6 +218,7 @@ int main(int argc, char** argv) {
       parsing_t->getfloat() << "," << label_cnt << "," <<
       distance_threshold << "\n";
   meta_file.close();
+
 
   //////////////////////////////////////////////////////////////////////////////
   // SCAN, QUICKJEDI, JOFILTER
@@ -236,10 +242,12 @@ int main(int argc, char** argv) {
     ssok.get_verification_count();
   scan_quickjedi_jofilter_ver = ssok.get_verification_count();
 
+
   //////////////////////////////////////////////////////////////////////////////
   // BUILD JSIM INDEX.
   lookup::TwoStageInvertedList tsil(label_cnt);
   tsil.build(sets_collection);
+
 
   //////////////////////////////////////////////////////////////////////////////
   // JSIM, BASELINE.
@@ -260,7 +268,6 @@ int main(int argc, char** argv) {
   jsim_baseline_cand = id.get_candidates_count();
   jsim_baseline_ub = jsim_baseline_cand - id.get_verification_count();
   jsim_baseline_ver = id.get_verification_count();
-
 
   //////////////////////////////////////////////////////////////////////////////
   // JSIM, QUICKJEDI.
@@ -283,7 +290,6 @@ int main(int argc, char** argv) {
   jsim_quickjedi_ub = jsim_quickjedi_cand - is.get_verification_count();
   jsim_quickjedi_ver = is.get_verification_count();
 
-
   //////////////////////////////////////////////////////////////////////////////
   // JSIM, BASELINE, WANG.
   std::cout << " == JSIM, BASELINE, WANG == " << std::endl;
@@ -305,7 +311,6 @@ int main(int argc, char** argv) {
   jsim_baseline_wang_ub = jsim_baseline_wang_cand - 
     ido.get_verification_count();
   jsim_baseline_wang_ver = ido.get_verification_count();
-
 
   //////////////////////////////////////////////////////////////////////////////
   // JSIM, QUICKJEDI, JOFILTER.
@@ -333,8 +338,6 @@ int main(int argc, char** argv) {
 
   //////////////////////////////////////////////////////////////////////////////
   // Print the results.
-
-
   runtime_file.open (outfile_name + "-" + std::to_string(distance_threshold) + 
     "-" + 
     std::to_string(query_tree_id) + "-" + "runtime.txt", std::ios_base::app);
@@ -366,6 +369,7 @@ int main(int argc, char** argv) {
   runtime_file.close();
   usleep(100000); // Wait 100ms for writing to disk.
 
+  //////////////////////////////////////////////////////////////////////////////
   // Print quality measures.
   quality_file.open (outfile_name + "-" + std::to_string(distance_threshold) +
     "-" + 
