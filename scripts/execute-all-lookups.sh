@@ -42,7 +42,7 @@ python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/i
 python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/schema/schema.bracket -o results/data/schema -t 2 4 7 10 3 6 12 18 8 16 31 47 -q 168 113 91 -a 4
 python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/smsen/smsen.bracket -o results/data/smsen -t 5 9 17 25 5 9 17 25 5 9 17 25 -q 1 2 3 -a 0
 python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/smszh/smszh.bracket -o results/data/smszh -t 5 9 17 25 5 9 17 25 5 9 17 25 -q 1 2 3 -a 0
-python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/spotify/spotify.bracket -o results/data/spotify -t 258 515 1029 1543 258 515 1029 1543 258 515 1029 1543 -q 3 6 7 -a 2
+python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/spotify/spotify.bracket -o results/data/spotify -t 258 515 1029 1543 258 515 1029 1543 258 515 1029 1543 -q 3 6 7 -a 5
 python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/standev/standev.bracket -o results/data/standev -t 156 311 621 931 261 522 1043 1565 318 635 1270 1905 -q 19 12 29 -a 4
 python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/stantrain/stantrain.bracket -o results/data/stantrain -t 75 149 297 445 111 222 444 666 167 333 666 999 -q 136 387 258 -a 4
 python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/twitter2/twitter2.bracket -o results/data/twitter2 -t 9 17 34 51 10 19 37 56 11 21 42 62 -q 16 156 14 -a 2
