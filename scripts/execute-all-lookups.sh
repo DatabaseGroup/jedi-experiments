@@ -33,7 +33,7 @@ python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/i
 python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/device/device.bracket -o results/data/device -t 7 13 25 37 11 22 44 66 21 41 82 123 -q 122 278 77 -a 5
 python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/face/face.bracket -o results/data/face -t 2 3 6 9 3 6 11 16 5 10 19 29 -q 2 1 14 -a 0
 python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/fenf/fenf.bracket -o results/data/fenf -t 3 5 10 15 3 5 10 15 3 5 10 15 -q 23 51 52 -a 0
-python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/movies/movies.bracket -o results/data/movies -t 2 3 5 7 2 3 5 7 2 3 5 7 -q 1 3 4 -a 2
+python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/movies/movies.bracket -o results/data/movies -t 2 3 5 7 2 3 5 7 2 3 5 7 -q 1 3 4 -a 4
 python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/nasa/nasa.bracket -o results/data/nasa -t 2 3 6 9 2 3 6 9 2 3 6 9 -q 1 2 3 -a 0
 python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/nba/nba.bracket -o results/data/nba -t 45 90 180 270 50 99 197 295 52 103 206 309 -q 2 4 15979 -a 2
 python scripts/execute-lookup.py -e build/exp-lookup -i external/jedi-datasets/input-data/reads/reads.bracket -o results/data/reads -t 1 2 3 4 1 2 3 4 1 2 3 4 -q 1 2 3 -a 0
