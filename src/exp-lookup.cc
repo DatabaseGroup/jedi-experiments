@@ -49,6 +49,25 @@
 #include "label_set_element.h"
 #include "lookup_result_element.h"
 
+void print_args() {
+  std::cout << "Please provide five input parameters:" << std::endl;
+  std::cout << "(1) file_path, " << std::endl;
+  std::cout << "(2) threshold, " << std::endl;
+  std::cout << "(3) output file name, " << std::endl;
+  std::cout << "(4) query_tree_id, " << std::endl;
+  std::cout << "(5) algorithm selection [0 ... 5]:" << std::endl;
+  std::cout << "  - 0: all algorithms." << std::endl;
+  std::cout << "  - 1: all algorithms using JSIM." << std::endl;
+  std::cout << "  - 2: all algorithms using JSIM, QuickJedi." << std::endl;
+  std::cout << "  - 3: all algorithms using JSIM, JediOrder." << std::endl;
+  std::cout << "  - 4: all algorithms using JSIM, QuickJedi|JediOrder." << 
+    std::endl;
+  std::cout << "  - 5: algorithm that uses JSIM, QuickJedi, JOFilter." << 
+    std::endl;
+
+  return;
+}
+
 int main(int argc, char** argv) {
   using Label = label::JSONLabel;
   using LabelSetElem = label_set_converter_index::LabelSetElement;
@@ -62,20 +81,7 @@ int main(int argc, char** argv) {
 
   // Arguments needed for execution.
   if (argc != 6) {
-    std::cout << "Please provide five input parameters:" << std::endl;
-    std::cout << "(1) file_path, " << std::endl;
-    std::cout << "(2) threshold, " << std::endl;
-    std::cout << "(3) output file name, " << std::endl;
-    std::cout << "(4) query_tree_id, " << std::endl;
-    std::cout << "(5) algorithm selection [0 ... 5]:" << std::endl;
-    std::cout << "  - 0: all algorithms." << std::endl;
-    std::cout << "  - 1: all algorithms using JSIM." << std::endl;
-    std::cout << "  - 2: all algorithms using JSIM, QuickJedi." << std::endl;
-    std::cout << "  - 3: all algorithms using JSIM, JediOrder." << std::endl;
-    std::cout << "  - 4: all algorithms using JSIM, QuickJedi|JediOrder." << 
-      std::endl;
-    std::cout << "  - 5: algorithm that uses JSIM, QuickJedi, JOFilter." << 
-      std::endl;
+    print_args();
     return -1;
   }
 
@@ -140,22 +146,7 @@ int main(int argc, char** argv) {
 
   // Verify whether algorithms parameter is set correctly.
   if (algorithms < 0 || algorithms > 5) {
-    std::cout << "Error: incorrect algorithms parameter." << std::endl;
-    std::cout << std::endl;
-    std::cout << "Please provide five input parameters:" << std::endl;
-    std::cout << "(1) file_path, " << std::endl;
-    std::cout << "(2) threshold, " << std::endl;
-    std::cout << "(3) output file name, " << std::endl;
-    std::cout << "(4) query_tree_id, " << std::endl;
-    std::cout << "(5) algorithm selection [0 ... 5]:" << std::endl;
-    std::cout << "  - 0: all algorithms." << std::endl;
-    std::cout << "  - 1: all algorithms using JSIM." << std::endl;
-    std::cout << "  - 2: all algorithms using JSIM, QuickJedi." << std::endl;
-    std::cout << "  - 3: all algorithms using JSIM, JediOrder." << std::endl;
-    std::cout << "  - 4: all algorithms using JSIM, QuickJedi|JediOrder." << 
-      std::endl;
-    std::cout << "  - 5: algorithm that uses JSIM, QuickJedi, JOFilter." << 
-      std::endl;
+    print_args();
     return -1;
   }
 
@@ -296,7 +287,7 @@ int main(int argc, char** argv) {
   auto* jsim_baseline_wang_t = timing.create_enroll("JSIM, BASELINE, WANG");
 
   // Initialize lookup algorithm.
-  lookup::VerificationUBkIndex<Label, JEDIBASE, JOFILTER> ido;
+  lookup::VerificationUBkIndex<Label, JEDIBASE, WANG> ido;
 
   jsim_baseline_wang_t->start();
   // Verify all computed lookup candidates and return the lookup result.
