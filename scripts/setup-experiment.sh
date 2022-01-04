@@ -27,10 +27,10 @@
 mkdir -p external/
 cd external/
 git clone https://frosch.cosy.sbg.ac.at/wmann/common-code.git
-git clone https://github.com/DatabaseGroup/tree-similarity.git
+git clone -b sigmod2022 https://github.com/DatabaseGroup/tree-similarity.git
 
 # Fetch the timing measurement library, and the algorithms repository.
-git clone https://github.com/DatabaseGroup/jedi-datasets.git
+git clone -b v1.0.0 https://github.com/DatabaseGroup/jedi-datasets.git
 cd jedi-datasets
 sh scripts/download-prepare.sh
 cd ../..
