@@ -41,7 +41,11 @@ cmake ..
 make
 ```
 
-To perform the experiments and plot the results by Huetter et al. (2022), the following steps have to be performed. First, the experimental data needs to be fetched.
+The resulting binary is located at `build/exp-lookup`.
+
+## Reproduce the experiments
+
+In order to perform the experiments and plot the results by Huetter et al. (2022), the following two steps have to be performed. First, the experimental data needs to be fetched and pre-processed.
 ```
 cd external
 git clone -b v1.0.0 https://github.com/DatabaseGroup/jedi-datasets.git
@@ -58,7 +62,7 @@ sh scripts/perform-experiment.sh
 
 The experimental results and the plots are located in the created `results` directory.
 
-## Reproduce the experiments within a Docker container
+### Reproduce the experiments within a Docker container
 
 The `Dockerfile` in the root directory of this repository allows to reproduce the entire experimental evaluation within a Docker a container. To do so, please execute the following commands:
 ```
@@ -68,3 +72,5 @@ docker run -d -ti --name jedi-exp --mount type=bind,source="$(pwd)"/results,targ
 ```
 
 This command will persistently store the experimental results in the mounted directory (here, in the created directory `results`). In case that the data should not be persistently stored, remove the `--mount type=bind,source="$(pwd)"/results,target=/usr/src/app/jedi-experiments/results` argument.
+
+Note that the overall experiment approximatelly takes up to **20 hours**.
