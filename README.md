@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/442186830.svg)](https://zenodo.org/badge/latestdoi/442186830)
+
 # jedi-experiments
 
 This repository contains the experimental evaluation of JSON similarity lookups that are published in the following publication:
