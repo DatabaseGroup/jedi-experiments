@@ -11,6 +11,17 @@ This repository contains the experimental evaluation of JSON similarity lookups 
 }
 ```
 
+## Software requirements
+
+The following list of software is required to execute the experiments:
+  * python 3
+  * gcc (or another compiler that supports C++11)
+  * cmake
+  * git
+  * git-lfs
+  * matplotlib
+  * pandas
+
 ## Building the project
 
 Get the external libraries common-code and tree-similarity used for time measurements and algorithms.
@@ -18,7 +29,7 @@ Get the external libraries common-code and tree-similarity used for time measure
 mkdir -p external
 cd external
 git clone https://frosch.cosy.sbg.ac.at/wmann/common-code.git
-git clone https://github.com/DatabaseGroup/tree-similarity.git
+git clone -b sigmod2022 https://github.com/DatabaseGroup/tree-similarity.git
 cd ..
 ```
 
@@ -30,13 +41,30 @@ cmake ..
 make
 ```
 
-Perform the experiments and plot the results as shown in Huetter et al. (2022).
+To perform the experiments and plot the results by Huetter et al. (2022), the following steps have to be performed. First, the experimental data needs to be fetched.
 ```
 cd external
-git clone https://github.com/DatabaseGroup/jedi-datasets.git
+git clone -b v1.0.0 https://github.com/DatabaseGroup/jedi-datasets.git
 cd jedi-datasets
 sh scripts/download-prepare.sh
 cd ../..
-sh scripts/execute-all-lookups.sh
-sh scripts/plot-all-lookups.sh
 ```
+
+At this point, the data and the source code are present. Finally, use the `perform-experiment.sh` script to execute experiments and plot the data.
+
+```
+sh scripts/perform-experiment.sh
+```
+
+The experimental results and the plots are located in the created `results` directory.
+
+## Reproduce the experiments within a Docker container
+
+The `Dockerfile` in the root directory of this repository allows to reproduce the entire experimental evaluation within a Docker a container. To do so, please execute the following commands:
+```
+mkdir -p results
+docker build --no-cache -t jedi-experiments .
+docker run -d -ti --name jedi-exp --mount type=bind,source="$(pwd)"/results,target=/usr/src/app/jedi-experiments/results jedi-experiments
+```
+
+This command will persistently store the experimental results in the mounted directory (here, in the created directory `results`). In case that the data should not be persistently stored, remove the `--mount type=bind,source="$(pwd)"/results,target=/usr/src/app/jedi-experiments/results` argument.
