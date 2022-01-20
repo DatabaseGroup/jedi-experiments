@@ -26,7 +26,7 @@
 # Fetch the timing measurement library, and the algorithms repository.
 mkdir -p external/
 cd external/
-git clone https://frosch.cosy.sbg.ac.at/wmann/common-code.git
+git clone -b original https://frosch.cosy.sbg.ac.at/code/cpp/timing-statistics.git
 git clone -b sigmod2022 https://github.com/DatabaseGroup/tree-similarity.git
 
 # Fetch the timing measurement library, and the algorithms repository.

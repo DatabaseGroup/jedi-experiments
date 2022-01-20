@@ -24,7 +24,7 @@ endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -O3 -Wall -Wextra -Wpedantic -Wstrict-overflow=5")
 
 # Verify which timing implementation to use.
-# NOTE: Comes from common-code.
+# NOTE: Comes from timing-statistics.
 include(CheckSymbolExists)
 CHECK_SYMBOL_EXISTS(clock_gettime "time.h" HAVE_CLOCK_GETTIME)
 if(NOT HAVE_CLOCK_GETTIME)
@@ -40,7 +40,7 @@ add_executable(
 # Link the timing library and header file.
 add_library(
   TimingLibrary                              # LIBRARY NAME
-  external/common-code/timings/timing.cxx    # LIBRARY SOURCE
+  external/timing-statistics/timings/timing.cxx    # LIBRARY SOURCE
 )
 target_link_libraries(
   exp-lookup    # TARGET EXECUTABLE NAME
@@ -48,7 +48,7 @@ target_link_libraries(
 )
 target_include_directories(
   exp-lookup                          # TARGET EXECUTABLE NAME
-  PUBLIC external/common-code/timings # HEADER FILE
+  PUBLIC external/timing-statistics/timings # HEADER FILE
 )
 
 # Create header-only library 'TreeSimilarity' with our algorithms.
