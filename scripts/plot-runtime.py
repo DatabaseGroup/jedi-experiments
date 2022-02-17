@@ -36,6 +36,9 @@ import pandas as pd
 import numpy as np
 from argparse import ArgumentParser
 
+# Force matplotlib to use TrueType fonts.
+plt.rc('pdf',fonttype = 42)
+plt.rc('ps',fonttype = 42)
 
 # Linestyles for twelve algorithmic configurations.
 linestyles = ['-'] #, '-.', '--', ':']

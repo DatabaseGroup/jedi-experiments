@@ -29,4 +29,4 @@ python scripts/plot-runtime.py -i ./results/data/ -o ./results/plots/runtime/ -y
 
 # Plot filter effectiveness.
 mkdir -p results/plots/effectiveness/
-python scripts/plot-effectiveness.py -i ./results/data/ -o ./results/plots/effectiveness/ -ys "symlog" -yl "Runtime [in ms]" -xl "Threshold"
+python scripts/plot-effectiveness.py -i ./results/data/ -o ./results/plots/effectiveness/ -ys "symlog" -yl "#Trees" -xl "Threshold"
