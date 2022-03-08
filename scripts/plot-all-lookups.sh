@@ -25,8 +25,8 @@
 
 # Plot runtime results.
 mkdir -p results/plots/runtime/
-python scripts/plot-runtime.py -i ./results/data/ -o ./results/plots/runtime/ -ys "symlog" -yl "Runtime [in ms]" -xl "Threshold" --l
+python3 scripts/plot-runtime.py -i ./results/data/ -o ./results/plots/runtime/ -ys "symlog" -yl "Runtime [in ms]" -xl "Threshold" --l
 
 # Plot filter effectiveness.
 mkdir -p results/plots/effectiveness/
-python scripts/plot-effectiveness.py -i ./results/data/ -o ./results/plots/effectiveness/ -ys "symlog" -yl "#Trees" -xl "Threshold"
+python3 scripts/plot-effectiveness.py -i ./results/data/ -o ./results/plots/effectiveness/ -ys "symlog" -yl "#Trees" -xl "Threshold"
