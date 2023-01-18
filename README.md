@@ -5,11 +5,19 @@
 This repository contains the experimental evaluation of JSON similarity lookups that are published in the following publication:
 
 ```
-@inproceedings{huetter2021jedi,
-  title        = {{JEDI}: These aren't the {JSON} documents you're looking for...},
-  author       = {H{\"u}tter, Thomas and Augsten, Nikolaus and Christoph M, Kirsch and Michael J, Carey and Li, Chen},
-  year         = 2022,
-  booktitle    = {Proceedings of the 2022 International Conference on Management of Data}
+@inproceedings{huetter2022jedi,
+  author = {H\"{u}tter, Thomas and Augsten, Nikolaus and Kirsch, Christoph M. and Carey, Michael J. and Li, Chen},
+  title = {JEDI: These Aren't the JSON Documents You're Looking For?},
+  year = {2022},
+  isbn = {9781450392495},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3514221.3517850},
+  doi = {10.1145/3514221.3517850},
+  pages = {1584–1597},
+  numpages = {14},
+  location = {Philadelphia, PA, USA},
+  series = {SIGMOD '22}
 }
 ```
 
