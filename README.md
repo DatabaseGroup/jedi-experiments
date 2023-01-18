@@ -32,6 +32,10 @@ The following list of software is required to execute the experiments:
   * matplotlib
   * pandas
 
+## Hardware requirements
+
+Reproducing the experiments requires approximately 64GB RAM. Note that otherwise, the experiments on larger datasets will fail and no results are produced.
+
 ## Building the project
 
 Get the external libraries common-code and tree-similarity used for time measurements and algorithms.
